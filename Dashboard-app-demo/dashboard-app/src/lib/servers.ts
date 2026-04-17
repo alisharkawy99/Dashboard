@@ -77,7 +77,6 @@ export function getServers({
     status && status !== "All"
       ? servers.filter((server) => server.status === status)
       : [...servers];
-
   return filtered.sort((a, b) => {
     switch (sort) {
       case "name-desc":

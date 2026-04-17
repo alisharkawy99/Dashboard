@@ -20,13 +20,21 @@ const AuthForm = ({ mode }: { mode: 'login' | 'signup' }) => {
         if (isSignup) {
             const response = await fetch('/api/signup', {
                 method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(payload),
             })
             if (!response.ok) {
-                const errorData = await response.json();
-                setError(errorData.message);
+                let message = "Request failed";
+                const contentType = response.headers.get("content-type") ?? "";
+                if (contentType.includes("application/json")) {
+                  const errorData = await response.json();
+                  message = errorData.message ?? message;
+                }
+                setError(message);
             } else {
-                const data = await response.json();
+                await response.json();
                 router.push('/dashboard');
                
             }
@@ -35,14 +43,22 @@ const AuthForm = ({ mode }: { mode: 'login' | 'signup' }) => {
         else {
             const response = await fetch('/api/login', {
                 method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
                 body: JSON.stringify(payload),
             })
             if (!response.ok) {
-                const errorData = await response.json();
-                setError(errorData.message);
+                let message = "Request failed";
+                const contentType = response.headers.get("content-type") ?? "";
+                if (contentType.includes("application/json")) {
+                  const errorData = await response.json();
+                  message = errorData.message ?? message;
+                }
+                setError(message);
             }
             else {
-                const data = await response.json();
+                await response.json();
                 router.push('/dashboard');
                 
             }

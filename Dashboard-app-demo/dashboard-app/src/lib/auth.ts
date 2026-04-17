@@ -20,7 +20,7 @@ export async function createSessionToken(payload: SessionPayload) {
       .sign(secret);
   }
   
-  export async function verifySessionToken(token: string) {
+export async function verifySessionToken(token: string) {
     try {
       const verified = await jwtVerify(token, secret);
       return verified.payload as SessionPayload;

@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from "next/navigation";
-export default function Home() {
+const Home = () => {
   const router = useRouter();
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-100 to-zinc-200 px-4">
@@ -17,4 +17,6 @@ export default function Home() {
       
     </div>
   );
-}
+};
+
+export default Home;
