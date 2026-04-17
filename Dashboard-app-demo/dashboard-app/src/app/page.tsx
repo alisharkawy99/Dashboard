@@ -11,7 +11,7 @@ const Home = () => {
 </p>
       <div className="flex flex-row gap-4">
         <button className="bg-black text-white px-4 py-2 rounded-lg cursor-pointer" onClick={() => router.push('/login')}>Login</button>
-        <button className="bg-white text-black px-4 py-2 rounded-lg border border-black cursor-pointer" onClick={() => router.push('/signIn')}>Create Account</button>
+        <button className="bg-white text-black px-4 py-2 rounded-lg border border-black cursor-pointer" onClick={() => router.push('/signup')}>Create Account</button>
       </div>
       </div>
       
