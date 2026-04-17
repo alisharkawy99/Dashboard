@@ -17,7 +17,7 @@ const DashboardLayout = async ({
       <header className="border-b border-zinc-200 bg-white">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4">
           <Link href="/dashboard" className="text-lg font-semibold text-zinc-900">
-            XOrithm Status
+            Dashboard
           </Link>
           <div className="flex items-center gap-4">
             <span className="text-sm text-zinc-600">{session.email}</span>
