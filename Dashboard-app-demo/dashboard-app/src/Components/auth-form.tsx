@@ -1,10 +1,12 @@
 'use client';
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation';
 const AuthForm = ({ mode }: { mode: 'login' | 'signup' }) => {
     const isSignup = mode === 'signup'? true : false;
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useRouter();
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -25,8 +27,10 @@ const AuthForm = ({ mode }: { mode: 'login' | 'signup' }) => {
                 setError(errorData.message);
             } else {
                 const data = await response.json();
-                console.log(data);
+                router.push('/dashboard');
+               
             }
+            setIsSubmitting(false);
         }
         else {
             const response = await fetch('/api/login', {
@@ -39,10 +43,12 @@ const AuthForm = ({ mode }: { mode: 'login' | 'signup' }) => {
             }
             else {
                 const data = await response.json();
-                console.log(data);
+                router.push('/dashboard');
+                
             }
+            setIsSubmitting(false);
         }
-        setIsSubmitting(false);
+        
     }
     return (
         <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">

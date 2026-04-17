@@ -10,8 +10,8 @@ export default function Home() {
       <p className="text-gray-500 overflow-hidden overflow-ellipsis max-w-md">Track health, uptime and latency for core servers with a simple status dashboard built for fast incident visibility.
 </p>
       <div className="flex flex-row gap-4">
-        <button className="bg-black text-white px-4 py-2 rounded-lg cursor-pointer" onClick={() => router.push('/Login')}>Login</button>
-        <button className="bg-white text-black px-4 py-2 rounded-lg border border-black cursor-pointer" onClick={() => router.push('/SignIn')}>Create Account</button>
+        <button className="bg-black text-white px-4 py-2 rounded-lg cursor-pointer" onClick={() => router.push('/login')}>Login</button>
+        <button className="bg-white text-black px-4 py-2 rounded-lg border border-black cursor-pointer" onClick={() => router.push('/signIn')}>Create Account</button>
       </div>
       </div>
       
