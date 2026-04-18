@@ -1,5 +1,6 @@
 import { ServerFilters } from "@/src/Components/server-filters";
-import { ServerTable } from "@/src/Components/server-table";
+import { ServerTableCrud } from "@/src/Components/server-table-crud";
+import { isDatabaseConfigured } from "@/src/lib/db";
 import { getServers, ServerSort, ServerStatus } from "@/src/lib/servers";
 
 const allowedStatuses: Array<ServerStatus | "All"> = [
@@ -34,6 +35,8 @@ const DashboardPage = async ({
     sort: selectedSort,
   });
 
+  const canMutate = isDatabaseConfigured();
+
   return (
     <section className="animate-page-enter space-y-4">
       <div>
@@ -44,7 +47,7 @@ const DashboardPage = async ({
       </div>
 
       <ServerFilters currentStatus={selectedStatus} currentSort={selectedSort} />
-      <ServerTable servers={serverList} />
+      <ServerTableCrud servers={serverList} canMutate={canMutate} />
     </section>
   );
 };

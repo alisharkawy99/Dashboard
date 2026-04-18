@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ServerDetailActions } from "@/src/Components/server-detail-actions";
 import { StatusBadge } from "@/src/Components/status-badge";
+import { isDatabaseConfigured } from "@/src/lib/db";
 import { getServerById } from "@/src/lib/servers";
 
 const ServerDetailsPage = async ({
@@ -15,6 +17,8 @@ const ServerDetailsPage = async ({
     notFound();
   }
 
+  const canMutate = isDatabaseConfigured();
+
   return (
     <section className="animate-page-enter space-y-4">
       <Link
@@ -25,12 +29,15 @@ const ServerDetailsPage = async ({
       </Link>
 
       <div className="rounded-xl border border-app-border bg-app-card p-6 shadow-sm transition-all duration-300 hover:shadow-md">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold text-app-fg">{server.name}</h1>
             <p className="mt-1 text-sm text-app-muted">Server ID: {server.id}</p>
           </div>
-          <StatusBadge status={server.status} />
+          <div className="flex flex-col items-end gap-3">
+            <StatusBadge status={server.status} />
+            <ServerDetailActions server={server} canMutate={canMutate} />
+          </div>
         </div>
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-2">
