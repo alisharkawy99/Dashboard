@@ -27,7 +27,9 @@ const RootLayout = ({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-app-bg text-app-fg antialiased transition-colors duration-300">
+        {children}
+      </body>
     </html>
   );
 };

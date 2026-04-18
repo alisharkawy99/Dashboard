@@ -35,12 +35,10 @@ const DashboardPage = async ({
   });
 
   return (
-    <section className="space-y-4">
+    <section className="animate-page-enter space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold text-zinc-900">
-          Service Status
-        </h1>
-        <p className="mt-1 text-sm text-zinc-600">
+        <h1 className="text-2xl font-semibold text-app-fg">Service Status</h1>
+        <p className="mt-1 text-sm text-app-muted">
           Monitor service health, uptime and response latency in one view.
         </p>
       </div>

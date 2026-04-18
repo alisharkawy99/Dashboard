@@ -19,7 +19,7 @@ export const LogoutButton = () => {
       type="button"
       onClick={handleLogout}
       disabled={isLoading}
-      className="rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-60 hover:cursor-pointer"
+      className="rounded-lg border border-app-border bg-app-card px-3 py-2 text-sm font-medium text-app-fg transition-all duration-200 hover:border-app-muted hover:bg-app-card-muted disabled:cursor-not-allowed disabled:opacity-60"
     >
       {isLoading ? "Logging out..." : "Logout"}
     </button>

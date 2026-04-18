@@ -1,26 +1,138 @@
 @import "tailwindcss";
 
+/* Colored dashboard identity (system light / default) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  color-scheme: dark;
+  --background-app: #0f172a;
+  --foreground: #e2e8f0;
+  --card: #111827;
+  --card-muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --border: #334155;
+  --row-hover: rgba(99, 102, 241, 0.08);
+  --accent-primary: #6366f1;
+  --accent-primary-hover: #4f46e5;
+  --accent-secondary: #22c55e;
+  --on-accent: #ffffff;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --status-up-bg: rgba(34, 197, 94, 0.15);
+  --status-up-fg: #4ade80;
+  --status-down-bg: rgba(239, 68, 68, 0.15);
+  --status-down-fg: #fca5a5;
+  --status-degraded-bg: rgba(245, 158, 11, 0.15);
+  --status-degraded-fg: #fcd34d;
+  --skeleton-base: #1e293b;
+  --skeleton-highlight: #334155;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* System dark: high-contrast monochrome for reduced eye strain */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: dark;
+    --background-app: #0a0a0a;
+    --foreground: #fafafa;
+    --card: #111111;
+    --card-muted: #171717;
+    --muted-foreground: #a3a3a3;
+    --border: #404040;
+    --row-hover: rgba(255, 255, 255, 0.06);
+    --accent-primary: #e5e5e5;
+    --accent-primary-hover: #ffffff;
+    --accent-secondary: #d4d4d4;
+    --on-accent: #0a0a0a;
+    --danger: #d4d4d4;
+    --warning: #a3a3a3;
+    --status-up-bg: #262626;
+    --status-up-fg: #e5e5e5;
+    --status-down-bg: #171717;
+    --status-down-fg: #a3a3a3;
+    --status-degraded-bg: #1f1f1f;
+    --status-degraded-fg: #d4d4d4;
+    --skeleton-base: #1a1a1a;
+    --skeleton-highlight: #2a2a2a;
   }
 }
 
+@theme inline {
+  --color-app-bg: var(--background-app);
+  --color-app-fg: var(--foreground);
+  --color-app-card: var(--card);
+  --color-app-card-muted: var(--card-muted);
+  --color-app-muted: var(--muted-foreground);
+  --color-app-border: var(--border);
+  --color-app-accent: var(--accent-primary);
+  --color-app-accent-hover: var(--accent-primary-hover);
+  --color-app-accent-secondary: var(--accent-secondary);
+  --color-app-danger: var(--danger);
+  --color-app-warning: var(--warning);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtle-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.45s ease-out both;
+}
+
+.animate-page-enter {
+  animation: fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-subtle-glow {
+  animation: subtle-glow 4s ease-in-out infinite;
+}
+
 body {
-  background: var(--background);
+  background: var(--background-app);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+}
+
+/* Skeleton shimmer overlay */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shift 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shift {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
 }

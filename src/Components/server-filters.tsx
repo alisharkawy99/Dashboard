@@ -17,16 +17,16 @@ export const ServerFilters = ({
   currentSort: ServerSort;
 }) => {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-xl border border-app-border bg-app-card p-4 transition-all duration-300 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-wrap gap-2">
         {statuses.map((status) => (
           <Link
             key={status}
             href={`/dashboard?status=${status}&sort=${currentSort}`}
-            className={`rounded-full px-3 py-1.5 text-sm ${
+            className={`rounded-full px-3 py-1.5 text-sm transition-all duration-200 ${
               currentStatus === status
-                ? "bg-zinc-900 text-white"
-                : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+                ? "bg-app-fg text-app-bg shadow-sm"
+                : "bg-app-card-muted text-app-muted hover:bg-app-border hover:text-app-fg"
             }`}
           >
             {status}
@@ -35,16 +35,16 @@ export const ServerFilters = ({
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-sm text-zinc-600">Sort:</span>
+        <span className="text-sm text-app-muted">Sort:</span>
         <div className="flex flex-wrap gap-2">
           {sorts.map((sort) => (
             <Link
               key={sort.value}
               href={`/dashboard?status=${currentStatus}&sort=${sort.value}`}
-              className={`rounded-md px-3 py-1.5 text-sm ${
+              className={`rounded-md px-3 py-1.5 text-sm transition-all duration-200 ${
                 currentSort === sort.value
-                  ? "bg-indigo-600 text-white"
-                  : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+                  ? "bg-app-accent text-[var(--on-accent)] shadow-md shadow-app-accent/20"
+                  : "bg-app-card-muted text-app-muted hover:bg-app-border hover:text-app-fg"
               }`}
             >
               {sort.label}

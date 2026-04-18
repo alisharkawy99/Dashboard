@@ -13,14 +13,19 @@ const DashboardLayout = async ({
   }
 
   return (
-    <div className="min-h-screen bg-zinc-100">
-      <header className="border-b border-zinc-200 bg-white">
+    <div className="min-h-screen bg-app-bg transition-colors duration-300">
+      <header className="sticky top-0 z-20 border-b border-app-border bg-app-card/90 backdrop-blur-md transition-colors duration-300">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4">
-          <Link href="/dashboard" className="text-lg font-semibold text-zinc-900">
+          <Link
+            href="/dashboard"
+            className="text-lg font-semibold text-app-fg transition-colors duration-200 hover:text-app-accent"
+          >
             Dashboard
           </Link>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-zinc-600">{session.email}</span>
+            <span className="text-sm text-app-muted transition-colors duration-200">
+              {session.email}
+            </span>
             <LogoutButton />
           </div>
         </div>
