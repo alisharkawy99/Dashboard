@@ -6,7 +6,7 @@ export type User = {
   passwordHash: string;
 };
 const adminUser: User = {
-    id: "ali",
+    id: crypto.randomUUID(),
     name: "ali",
     email: "ali@example.com",
     passwordHash: hashSync("12345678", 10),
