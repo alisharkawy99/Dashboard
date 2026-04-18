@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { createSessionToken, SESSION_COOKIE_NAME } from "@/src/lib/auth";
+import { isDatabaseNetworkError } from "@/src/lib/db";
 import { createUser, findUserByEmail } from "@/src/lib/user";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -46,6 +47,15 @@ export const POST = async (request: Request) => {
       );
     }
     console.error(e);
+    if (isDatabaseNetworkError(e)) {
+      return NextResponse.json(
+        {
+          message:
+            "Cannot reach the database (network). Confirm DATABASE_URL in .env.local matches Neon, your network allows HTTPS, and on Windows try: set NODE_OPTIONS=--dns-result-order=ipv4first before npm run dev.",
+        },
+        { status: 503 },
+      );
+    }
     return NextResponse.json(
       { message: "Could not create account. Check DATABASE_URL and try again." },
       { status: 500 },

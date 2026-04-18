@@ -1,16 +1,47 @@
 import { neon } from "@neondatabase/serverless";
 
+/** Trim and strip accidental wrapping quotes from .env copy/paste. */
+export const normalizeDatabaseUrl = (raw: string | undefined): string | null => {
+  if (raw == null) return null;
+  let u = raw.trim();
+  if (
+    (u.startsWith('"') && u.endsWith('"')) ||
+    (u.startsWith("'") && u.endsWith("'"))
+  ) {
+    u = u.slice(1, -1).trim();
+  }
+  return u.length > 0 ? u : null;
+};
+
 let sql: ReturnType<typeof neon> | null = null;
 let schemaReady: Promise<void> | null = null;
+let cachedUrl: string | null = null;
 
 export const getSql = () => {
-  const url = process.env.DATABASE_URL;
+  const url = normalizeDatabaseUrl(process.env.DATABASE_URL);
   if (!url) return null;
-  if (!sql) sql = neon(url);
+  if (cachedUrl !== url) {
+    cachedUrl = url;
+    sql = neon(url);
+    schemaReady = null;
+  }
   return sql;
 };
 
-export const isDatabaseConfigured = () => Boolean(process.env.DATABASE_URL?.trim());
+export const isDatabaseConfigured = () =>
+  Boolean(normalizeDatabaseUrl(process.env.DATABASE_URL));
+
+/** True when Neon’s HTTPS fetch fails (DNS, firewall, bad URL, SSL, IPv6 on Windows, etc.). */
+export const isDatabaseNetworkError = (e: unknown): boolean => {
+  const msg = e instanceof Error ? e.message : String(e);
+  return (
+    msg.includes("fetch failed") ||
+    msg.includes("ECONNREFUSED") ||
+    msg.includes("ENOTFOUND") ||
+    msg.includes("certificate") ||
+    msg.includes("ETIMEDOUT")
+  );
+};
 
 /** One bootstrap: `users` + `servers` in the same database. */
 export const ensureSchema = async () => {

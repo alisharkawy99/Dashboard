@@ -1,3 +1,4 @@
+import { isDatabaseNetworkError } from "@/src/lib/db";
 import { findUserByEmail } from "@/src/lib/user";
 import { NextResponse } from "next/server";
 import { compare } from "bcryptjs";
@@ -33,6 +34,15 @@ export const POST = async (request: Request) => {
         return NextResponse.json({ message: "Login successful" }, { status: 200 });
     } catch (e) {
         console.error(e);
+        if (isDatabaseNetworkError(e)) {
+            return NextResponse.json(
+                {
+                    message:
+                        "Cannot reach the database (network). Confirm DATABASE_URL and, on Windows, try: set NODE_OPTIONS=--dns-result-order=ipv4first before npm run dev.",
+                },
+                { status: 503 },
+            );
+        }
         return NextResponse.json(
             { message: "Login failed. Please try again." },
             { status: 500 },

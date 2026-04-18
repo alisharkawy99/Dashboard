@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { readApiErrorMessage } from "@/src/lib/api-error";
 import type { ServerRecord, ServerStatus } from "@/src/lib/servers";
 
 const STATUSES: ServerStatus[] = ["Up", "Down", "Degraded"];
@@ -15,18 +17,6 @@ const toDatetimeLocalValue = (iso: string) => {
 const fromDatetimeLocalValue = (s: string) => new Date(s).toISOString();
 
 type Mode = "create" | "edit";
-
-const readApiError = async (response: Response) => {
-  const text = await response.text();
-  if (!text) return `${response.status} ${response.statusText}`;
-  try {
-    const data = JSON.parse(text) as { message?: string };
-    if (typeof data.message === "string") return data.message;
-  } catch {
-    /* ignore */
-  }
-  return text.slice(0, 200);
-};
 
 export const ServerFormModal = ({
   open,
@@ -48,12 +38,10 @@ export const ServerFormModal = ({
   const [uptimePercent, setUptimePercent] = useState(100);
   const [region, setRegion] = useState("");
   const [lastCheckedAtLocal, setLastCheckedAtLocal] = useState("");
-  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!open) return;
-    setError("");
     if (mode === "edit" && server) {
       setName(server.name);
       setIpAddress(server.ipAddress);
@@ -77,7 +65,6 @@ export const ServerFormModal = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setSubmitting(true);
     const lastCheckedAt = lastCheckedAtLocal
       ? fromDatetimeLocalValue(lastCheckedAtLocal)
@@ -99,10 +86,11 @@ export const ServerFormModal = ({
           }),
         });
         if (!res.ok) {
-          setError(await readApiError(res));
+          toast.error(await readApiErrorMessage(res));
           setSubmitting(false);
           return;
         }
+        toast.success("Server created");
       } else if (mode === "edit" && server) {
         const res = await fetch(`/api/servers/${server.id}`, {
           method: "PATCH",
@@ -118,15 +106,16 @@ export const ServerFormModal = ({
           }),
         });
         if (!res.ok) {
-          setError(await readApiError(res));
+          toast.error(await readApiErrorMessage(res));
           setSubmitting(false);
           return;
         }
+        toast.success("Server updated");
       }
       onSaved();
       onClose();
     } catch {
-      setError("Network error. Try again.");
+      toast.error("Network error. Try again.");
     }
     setSubmitting(false);
   };
@@ -229,12 +218,6 @@ export const ServerFormModal = ({
               className="mt-1 w-full rounded-lg border border-app-border bg-app-bg px-3 py-2 text-app-fg outline-none transition-all focus:border-app-accent focus:ring-2 focus:ring-app-accent/30"
             />
           </label>
-
-          {error ? (
-            <p className="rounded-lg border border-app-danger/30 bg-app-danger/10 px-3 py-2 text-sm text-app-danger">
-              {error}
-            </p>
-          ) : null}
 
           <div className="flex justify-end gap-2 pt-2">
             <button

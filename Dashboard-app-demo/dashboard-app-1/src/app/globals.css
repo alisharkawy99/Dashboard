@@ -136,3 +136,72 @@ body {
     background-position: -100% 0;
   }
 }
+
+/* React Toastify — match app theme (CSS variables + smooth transitions) */
+.app-toastify-root.Toastify__toast-container {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  color: var(--foreground);
+}
+
+.app-toast.Toastify__toast {
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-primary) 12%, transparent),
+    0 10px 40px rgba(0, 0, 0, 0.35);
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.app-toast.Toastify__toast--success {
+  border-color: color-mix(in srgb, var(--accent-secondary) 50%, var(--border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-secondary) 25%, transparent),
+    0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.app-toast.Toastify__toast--error {
+  border-color: color-mix(in srgb, var(--danger) 55%, var(--border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--danger) 22%, transparent),
+    0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.app-toast.Toastify__toast--info {
+  border-color: color-mix(in srgb, var(--accent-primary) 45%, var(--border));
+}
+
+.app-toast.Toastify__toast .Toastify__toast-body {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  padding: 0.125rem 0;
+}
+
+.app-toast.Toastify__toast .Toastify__progress-bar {
+  background: var(--accent-primary);
+}
+
+.app-toast.Toastify__toast--success .Toastify__progress-bar {
+  background: var(--accent-secondary);
+}
+
+.app-toast.Toastify__toast--error .Toastify__progress-bar {
+  background: var(--danger);
+}
+
+.Toastify__close-button {
+  color: var(--muted-foreground);
+  opacity: 0.85;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.Toastify__close-button:hover {
+  color: var(--foreground);
+  opacity: 1;
+}

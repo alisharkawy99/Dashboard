@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AppToastContainer } from "@/src/Components/app-toast-container";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,6 +30,7 @@ const RootLayout = ({
     >
       <body className="min-h-full flex flex-col bg-app-bg text-app-fg antialiased transition-colors duration-300">
         {children}
+        <AppToastContainer />
       </body>
     </html>
   );

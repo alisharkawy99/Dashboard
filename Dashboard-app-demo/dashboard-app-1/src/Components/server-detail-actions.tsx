@@ -2,20 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { readApiErrorMessage } from "@/src/lib/api-error";
 import type { ServerRecord } from "@/src/lib/servers";
 import { ServerFormModal } from "@/src/Components/server-form-modal";
-
-const readApiError = async (response: Response) => {
-  const text = await response.text();
-  if (!text) return `${response.status} ${response.statusText}`;
-  try {
-    const data = JSON.parse(text) as { message?: string };
-    if (typeof data.message === "string") return data.message;
-  } catch {
-    /* ignore */
-  }
-  return text.slice(0, 200);
-};
 
 export const ServerDetailActions = ({
   server,
@@ -44,14 +34,15 @@ export const ServerDetailActions = ({
         method: "DELETE",
       });
       if (!res.ok) {
-        alert(await readApiError(res));
+        toast.error(await readApiErrorMessage(res));
         setDeleting(false);
         return;
       }
+      toast.success(`Deleted “${server.name}”`);
       router.push("/dashboard");
       router.refresh();
     } catch {
-      alert("Network error while deleting.");
+      toast.error("Network error while deleting.");
       setDeleting(false);
     }
   };

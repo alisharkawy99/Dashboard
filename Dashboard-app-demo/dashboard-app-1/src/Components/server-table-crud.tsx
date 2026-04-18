@@ -3,21 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { readApiErrorMessage } from "@/src/lib/api-error";
 import type { ServerRecord } from "@/src/lib/servers";
 import { StatusBadge } from "@/src/Components/status-badge";
 import { ServerFormModal } from "@/src/Components/server-form-modal";
-
-const readApiError = async (response: Response) => {
-  const text = await response.text();
-  if (!text) return `${response.status} ${response.statusText}`;
-  try {
-    const data = JSON.parse(text) as { message?: string };
-    if (typeof data.message === "string") return data.message;
-  } catch {
-    /* ignore */
-  }
-  return text.slice(0, 200);
-};
 
 export const ServerTableCrud = ({
   servers,
@@ -58,13 +48,14 @@ export const ServerTableCrud = ({
     try {
       const res = await fetch(`/api/servers/${server.id}`, { method: "DELETE" });
       if (!res.ok) {
-        alert(await readApiError(res));
+        toast.error(await readApiErrorMessage(res));
         setDeletingId(null);
         return;
       }
+      toast.success(`Deleted “${server.name}”`);
       refresh();
     } catch {
-      alert("Network error while deleting.");
+      toast.error("Network error while deleting.");
     }
     setDeletingId(null);
   };
@@ -78,7 +69,7 @@ export const ServerTableCrud = ({
             <button
               type="button"
               onClick={openCreate}
-              className="mt-4 hover:cursor-pointer rounded-lg bg-app-accent px-4 py-2 text-sm font-medium text-[var(--on-accent)] transition-colors hover:bg-app-accent-hover"
+              className="hover:cursor-pointer rounded-lg bg-app-accent px-4 py-2 text-sm font-medium text-[var(--on-accent)] transition-colors hover:bg-app-accent-hover"
             >
               Add server
             </button>
