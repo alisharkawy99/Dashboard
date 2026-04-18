@@ -6,6 +6,7 @@ const AuthForm = ({ mode }: { mode: 'login' | 'signup' }) => {
     const isSignup = mode === 'signup'? true : false;
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -102,13 +103,24 @@ const AuthForm = ({ mode }: { mode: 'login' | 'signup' }) => {
     
             <label className="block text-sm text-zinc-700">
               Password
-              <input
-                required
-                name="password"
-                type="password"
-                minLength={8}
-                className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 outline-none ring-indigo-100 transition focus:ring-4"
-              />
+              <div className="relative mt-1">
+                <input
+                  required
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  minLength={8}
+                  autoComplete={isSignup ? "new-password" : "current-password"}
+                  className="w-full rounded-lg border border-zinc-300 py-2 pl-3 pr-14 outline-none ring-indigo-100 transition focus:ring-4"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </label>
     
             {error ? (
