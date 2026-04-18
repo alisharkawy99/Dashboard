@@ -41,3 +41,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Archives / local drops (never commit these — huge and slow to push)
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+
+# Duplicate / scratch copy at repo root (remove this line if you intentionally track `dashboard-app/`)
+/dashboard-app/
