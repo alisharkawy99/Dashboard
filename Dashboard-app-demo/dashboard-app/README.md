@@ -7,6 +7,7 @@ A Next.js web app that shows a **service health dashboard** for multiple servers
 - **Framework:** Next.js 16 (App Router), React 19, TypeScript  
 - **Styling:** Tailwind CSS v4  
 - **Auth:** HTTP-only session cookie with a JWT (`jose`), passwords hashed with `bcryptjs`  
+- **Users (Postgres):** [@neondatabase/serverless](https://neon.tech) with `DATABASE_URL`. Without it, the app uses an in-memory store (OK for quick local tests only).  
 - **Hosting:** Designed to deploy on [Vercel](https://vercel.com) (or any Node host)
 
 ## Features
@@ -42,13 +43,15 @@ A Next.js web app that shows a **service health dashboard** for multiple servers
 
    Paste the output as the value of `AUTH_SECRET`.
 
-3. **Start the dev server:**
+3. **Database (recommended for real login/sign-up):** Create a free project on [Neon](https://neon.tech), copy the **connection string**, and add it to `.env.local` as **`DATABASE_URL`**. The app creates the `users` table and a seed account on first use. For production (e.g. Vercel), add the same variable in the project’s environment settings.
+
+4. **Start the dev server:**
 
    ```bash
    npm run dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000).
+5. Open [http://localhost:3000](http://localhost:3000).
 
 If Turbopack misbehaves after route or config changes, clear `.next` and restart, or use:
 
@@ -63,7 +66,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - **App Router:** `src/app` with route groups `(auth)` for login/signup and `(dashboard)` for protected UI.  
 - **Middleware:** `middleware.ts` checks the session cookie for protected paths and redirects unauthenticated users to `/login`. Session in middleware is read from `request.cookies` (`getSessionFromRequest`), not `cookies()` from `next/headers`.  
 - **API routes:** `POST /api/login`, `POST /api/signup`, `POST /api/logout` set or clear the session cookie.  
-- **Data:** `src/lib/servers.ts` holds static server rows; `getServers` applies filter/sort. Users live in `src/lib/user.ts` (in-memory `Map`).  
+- **Data:** `src/lib/servers.ts` holds static server rows; `getServers` applies filter/sort. **Users** live in Postgres when `DATABASE_URL` is set (`src/lib/user.ts`, `src/lib/db.ts`); otherwise an in-memory fallback. A **seed user** (`ali@example.com` / `12345678`) is inserted when the DB is ready.  
 - **URL state:** Dashboard filters use `?status=&sort=` so views are shareable and refresh-safe.
 
 ## Design choices

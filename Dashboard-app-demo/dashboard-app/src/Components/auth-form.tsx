@@ -17,50 +17,50 @@ const AuthForm = ({ mode }: { mode: 'login' | 'signup' }) => {
             email: formData.get('email') as string,
             password: formData.get('password') as string,
         }
+        const readErrorMessage = async (response: Response) => {
+            const text = await response.text();
+            if (!text) return `${response.status} ${response.statusText}`;
+            try {
+                const data = JSON.parse(text) as { message?: string };
+                if (typeof data.message === "string") return data.message;
+            } catch {
+                /* not JSON */
+            }
+            return text.slice(0, 200);
+        };
+
         if (isSignup) {
-            const response = await fetch('/api/signup', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            })
-            if (!response.ok) {
-                let message = "Request failed";
-                const contentType = response.headers.get("content-type") ?? "";
-                if (contentType.includes("application/json")) {
-                  const errorData = await response.json();
-                  message = errorData.message ?? message;
+            try {
+                const response = await fetch("/api/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+                if (!response.ok) {
+                    setError(await readErrorMessage(response));
+                } else {
+                    await response.json();
+                    router.push("/dashboard");
                 }
-                setError(message);
-            } else {
-                await response.json();
-                router.push('/dashboard');
-               
+            } catch {
+                setError("Network error. Check your connection and try again.");
             }
             setIsSubmitting(false);
-        }
-        else {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            })
-            if (!response.ok) {
-                let message = "Request failed";
-                const contentType = response.headers.get("content-type") ?? "";
-                if (contentType.includes("application/json")) {
-                  const errorData = await response.json();
-                  message = errorData.message ?? message;
+        } else {
+            try {
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+                if (!response.ok) {
+                    setError(await readErrorMessage(response));
+                } else {
+                    await response.json();
+                    router.push("/dashboard");
                 }
-                setError(message);
-            }
-            else {
-                await response.json();
-                router.push('/dashboard');
-                
+            } catch {
+                setError("Network error. Check your connection and try again.");
             }
             setIsSubmitting(false);
         }
