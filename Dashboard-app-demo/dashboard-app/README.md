@@ -1,88 +1,86 @@
 # XOrithm Service Status Dashboard
 
-A Next.js web app that shows a **service health dashboard** for multiple servers: status (Up / Degraded / Down), response time, uptime, and region. Access to the dashboard is **protected**; users **sign up**, **log in**, and **log out** with email and password. Server data is **mock/static** (in-memory users + static server list), suitable for demos and take-home assignments.
+A Next.js app for a **service health dashboard**: server status (Up / Degraded / Down), response time, uptime, and region. The dashboard is **protected** — users **sign up**, **log in**, and **log out** with email and password. Server listings are **mock/static** for demos and coursework.
+
+## Live deployment
+
+**Production app (Vercel):** [https://ali-dashboard-xorithm.vercel.app/](https://ali-dashboard-xorithm.vercel.app/)
+
+Sign up or log in there to try the flow; the database on production uses Postgres ([Neon](https://neon.tech)) via the `DATABASE_URL` set in the Vercel project’s environment variables (same kind of connection string you use locally in `.env.local`).
 
 ## Tech stack
 
 - **Framework:** Next.js 16 (App Router), React 19, TypeScript  
 - **Styling:** Tailwind CSS v4  
 - **Auth:** HTTP-only session cookie with a JWT (`jose`), passwords hashed with `bcryptjs`  
-- **Users (Postgres):** [@neondatabase/serverless](https://neon.tech) with `DATABASE_URL`. Without it, the app uses an in-memory store (OK for quick local tests only).  
-- **Hosting:** Designed to deploy on [Vercel](https://vercel.com) (or any Node host)
+- **Users:** [@neondatabase/serverless](https://neon.tech) when `DATABASE_URL` is set; otherwise an in-memory store (local quick tests only — not suitable for serverless production without a real DB)  
+- **Hosting:** [Vercel](https://vercel.com)
 
 ## Features
 
-- **Authentication:** Sign up, login, logout; session enforced via middleware on `/dashboard` and `/servers/*`.  
-- **Dashboard:** Table of servers with color-coded status badges, optional **filter by status** and **sort** (name / response time) via URL search params.  
-- **Details:** Click a server row to open `/servers/[id]` with name, IP, response time, uptime, region, and last checked time.
+- **Authentication:** Sign up, login, logout; middleware protects `/dashboard` and `/servers/*`.  
+- **Dashboard:** Server table with status badges; **filter by status** and **sort** (name / response time) via URL query params.  
+- **Details:** `/servers/[id]` shows name, IP, response time, uptime, region, and last checked time.
 
 ## Prerequisites
 
 - **Node.js** 18.18+ (20+ recommended)  
 - **npm** (or pnpm / yarn / bun)
 
-## How to run locally
+## Run locally
 
-1. **Install dependencies** (from this folder, where `package.json` lives):
+1. **Install** (from this folder — where `package.json` lives):
 
    ```bash
    npm install
    ```
 
-2. **Environment variables** — create `.env.local` in this directory (same level as `package.json`):
+2. **Environment** — copy the example file and edit `.env.local`:
 
    ```bash
    cp .env.example .env.local
    ```
 
-   Edit `.env.local` and set **`AUTH_SECRET`** to a long random string (used to sign session tokens). Example:
+   Set **`AUTH_SECRET`** to a long random string (signs session tokens):
 
    ```bash
    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
    ```
 
-   Paste the output as the value of `AUTH_SECRET`.
+3. **Database (recommended):** In [Neon](https://neon.tech), create a project and paste the **connection string** into `.env.local` as **`DATABASE_URL`**. The app creates the `users` table when needed. For Vercel, add the same variables under **Settings → Environment Variables** and redeploy.
 
-3. **Database (recommended for real login/sign-up):** Create a free project on [Neon](https://neon.tech), copy the **connection string**, and add it to `.env.local` as **`DATABASE_URL`**. The app creates the `users` table and a seed account on first use. For production (e.g. Vercel), add the same variable in the project’s environment settings.
-
-4. **Start the dev server:**
+4. **Dev server:**
 
    ```bash
    npm run dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000).
+   Open [http://localhost:3000](http://localhost:3000).
 
-If Turbopack misbehaves after route or config changes, clear `.next` and restart, or use:
+If Turbopack acts up after big changes, clear `.next` and restart, or run `npm run dev:webpack`.
 
-```bash
-npm run dev:webpack
-```
+## Architecture (short)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **App Router:** `src/app` — route groups `(auth)` for login/signup, `(dashboard)` for protected UI.  
+- **Middleware:** `middleware.ts` reads the session from `request.cookies` (`getSessionFromRequest`) and redirects to `/login` when needed.  
+- **API:** `POST /api/login`, `POST /api/signup`, `POST /api/logout` set or clear the session cookie.  
+- **Data:** `src/lib/servers.ts` — static server list and filter/sort. Users: `src/lib/user.ts` + `src/lib/db.ts` (Postgres when `DATABASE_URL` is set).  
+- **URL state:** Dashboard uses `?status=&sort=` so filters survive refresh and can be shared.
 
+## Design notes
 
+- Tailwind, zinc palette, indigo accents.  
+- Server Components by default; auth form is a client component.  
+- JWT in an **httpOnly** cookie instead of `localStorage` to reduce XSS risk.
 
-- **App Router:** `src/app` with route groups `(auth)` for login/signup and `(dashboard)` for protected UI.  
-- **Middleware:** `middleware.ts` checks the session cookie for protected paths and redirects unauthenticated users to `/login`. Session in middleware is read from `request.cookies` (`getSessionFromRequest`), not `cookies()` from `next/headers`.  
-- **API routes:** `POST /api/login`, `POST /api/signup`, `POST /api/logout` set or clear the session cookie.  
-- **Data:** `src/lib/servers.ts` holds static server rows; `getServers` applies filter/sort. **Users** live in Postgres when `DATABASE_URL` is set (`src/lib/user.ts`, `src/lib/db.ts`); otherwise an in-memory fallback. A **seed user** (`ali@example.com` / `12345678`) is inserted when the DB is ready.  
-- **URL state:** Dashboard filters use `?status=&sort=` so views are shareable and refresh-safe.
-
-## Design choices
-
-- **Tailwind** for layout and components; neutral zinc palette with indigo accents for links and primary actions.  
-- **Server Components** where possible; forms use client components for submission and navigation.  
-- **JWT in httpOnly cookie** reduces XSS risk versus storing tokens in `localStorage`.
-
-## Project layout (short)
+## Project layout
 
 ```text
 src/
-  app/                 # Routes, layouts, API handlers
-  Components/          # UI (auth form, table, filters, badges, …)
-  lib/                 # auth, session, users, server data
-middleware.ts          # Route protection
+  app/           # Routes, layouts, API routes
+  Components/    # UI (auth form, table, filters, …)
+  lib/           # auth, session, users, server data
+middleware.ts    # Protected routes
 ```
 
 ## License
