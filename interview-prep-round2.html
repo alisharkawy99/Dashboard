@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontend Interview Prep — Round 2 (50 Q&A)</title>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1a1a2e; --muted:#5b6172; --accent:#4f46e5;
+    --accent-soft:#eef2ff; --border:#e4e7ee; --code-bg:#0f172a; --code-fg:#e2e8f0;
+    --q:#111827; --good:#047857; --warn:#b45309;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--fg); line-height:1.55; margin:0; font-size:13.5px;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:36px 40px;}
+  header.cover{
+    text-align:center; padding:60px 20px 40px; border-bottom:3px solid var(--accent);
+    margin-bottom:8px;
+  }
+  header.cover h1{font-size:30px; margin:0 0 8px; letter-spacing:-0.5px;}
+  header.cover p{color:var(--muted); margin:4px 0; font-size:14px;}
+  .badge{display:inline-block; background:var(--accent-soft); color:var(--accent);
+    padding:4px 12px; border-radius:999px; font-size:12px; font-weight:600; margin-top:12px;}
+  h2.section{
+    font-size:19px; margin:34px 0 6px; padding:10px 14px; background:var(--accent);
+    color:#fff; border-radius:8px; letter-spacing:.2px;
+  }
+  .section-note{color:var(--muted); font-size:12.5px; margin:0 0 14px 2px;}
+  .qa{margin:0 0 16px; padding:14px 16px; border:1px solid var(--border);
+    border-left:4px solid var(--accent); border-radius:8px; break-inside:avoid; page-break-inside:avoid;}
+  .qa .qnum{color:var(--accent); font-weight:700;}
+  .qa .q{font-weight:700; color:var(--q); margin:0 0 6px; font-size:14px;}
+  .qa .a{margin:0; color:#26282f;}
+  .qa .a strong{color:#111827;}
+  .tip{background:#f0fdf4; border-left:4px solid var(--good); padding:4px 10px;
+    margin-top:8px; border-radius:6px; font-size:12.5px;}
+  .tip b{color:var(--good);}
+  code{background:#eef1f6; color:#b1163e; padding:1.5px 5px; border-radius:4px;
+    font-family:"SF Mono",Menlo,Consolas,monospace; font-size:12px;}
+  pre{background:var(--code-bg); color:var(--code-fg); padding:12px 14px; border-radius:8px;
+    overflow-x:auto; font-size:11.5px; line-height:1.5; margin:8px 0;
+    font-family:"SF Mono",Menlo,Consolas,monospace;}
+  pre code{background:none; color:inherit; padding:0;}
+  .toc{columns:2; column-gap:30px; font-size:12.5px; color:var(--muted); margin-bottom:10px;}
+  .toc div{margin-bottom:3px;}
+  .pagebreak{page-break-before:always;}
+  footer{margin-top:40px; padding-top:14px; border-top:1px solid var(--border);
+    color:var(--muted); font-size:11.5px; text-align:center;}
+  ul{margin:6px 0 6px 0; padding-left:18px;} li{margin:2px 0;}
+  @page{margin:14mm 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <h1>Frontend Interview Prep — Round 2</h1>
+  <p>50 Questions &amp; Answers · React · Next.js · HTML · CSS · TypeScript · Design Systems</p>
+  <p>Prepared for: Ali — Role-Related Knowledge (hands-on frontend)</p>
+  <span class="badge">Focus: Next.js 16 App Router · React 19 · write &amp; debug code</span>
+</header>
+
+<p class="section-note" style="margin-top:18px;">
+<b>How to use this:</b> Cover the answer, say yours out loud, then compare. The interview is hands-on — practice <i>speaking</i> the answer and writing tiny code snippets, not just reading. Sections: React (1–10), Next.js (11–27), HTML (28–35), CSS (36–45), TypeScript (46–48), Design Systems (49–50).
+</p>
+
+<!-- ============ REACT ============ -->
+<h2 class="section">Part 1 — React Fundamentals (Q1–Q10)</h2>
+<p class="section-note">The hands-on round always probes these. Know them cold.</p>
+
+<div class="qa"><p class="q"><span class="qnum">Q1.</span> What is a React component re-render, and what triggers it?</p>
+<p class="a">A re-render is React <strong>calling your component function again</strong> to produce new JSX, then diffing it against the previous output and updating only the changed DOM nodes. <strong>Re-render ≠ DOM update.</strong> Triggers: (1) its own <strong>state changes</strong> via <code>setState</code>; (2) its <strong>parent re-renders</strong>; (3) its <strong>props or consumed context change</strong>.</p>
+<div class="tip"><b>Say this:</b> "Re-render means React re-runs the function; it only touches the DOM where the diff differs."</div></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q2.</span> Explain the <code>useEffect</code> dependency array: <code>[]</code> vs <code>[x]</code> vs no array.</p>
+<p class="a"><code>useEffect(fn)</code> (no array) → runs <strong>after every render</strong> (most common cause of infinite loops). <code>useEffect(fn, [])</code> → runs <strong>once after mount</strong> (cleanup on unmount). <code>useEffect(fn, [x])</code> → runs on mount and whenever <code>x</code> changes. The effect runs <strong>after</strong> the render is committed/painted.</p>
+<div class="tip"><b>Trap:</b> setState inside an effect with no deps array → re-render → effect runs again → infinite loop.</div></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q3.</span> Why does React need the <code>key</code> prop, and why is <code>key={id}</code> better than <code>key={index}</code>?</p>
+<p class="a">A <code>key</code> is a <strong>stable, unique identifier</strong> React uses to track list items across re-renders during reconciliation — to know which items were added, removed, or moved, so it can reuse DOM nodes and component state. <code>key={index}</code> breaks when the list reorders/deletes: indexes shift, so React mismatches rows, causing wrong updates and lost input state. A stable <code>id</code> follows the item.</p>
+<div class="tip"><b>Note:</b> <code>key</code> is a special React prop — not an HTML <code>id</code>. They are unrelated.</div></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q4.</span> What is "derived state" and why avoid storing it in <code>useState</code>?</p>
+<p class="a">Derived data is anything computable from existing props/state (e.g. a filtered list from <code>items + query</code>). <strong>Compute it during render</strong> instead of storing in state + syncing via <code>useEffect</code>. Storing it duplicates the source of truth, causes bugs and extra renders. Rule: <em>"Don't store what you can derive."</em> Use <code>useMemo</code> only if the computation is expensive.</p>
+<pre><code>const results = items.filter(i =&gt; i.name.includes(query)); // not useState</code></pre></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q5.</span> Difference between controlled and uncontrolled components?</p>
+<p class="a">A <strong>controlled</strong> input's value is driven by React state (<code>value={x} onChange={...}</code>) — React is the single source of truth. An <strong>uncontrolled</strong> input keeps its own DOM state, read via a <code>ref</code> when needed. Controlled is preferred for validation/live UI; uncontrolled is simpler for basic forms.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q6.</span> What problem do <code>useMemo</code> and <code>useCallback</code> solve, and when should you NOT use them?</p>
+<p class="a"><code>useMemo</code> caches a <strong>computed value</strong>; <code>useCallback</code> caches a <strong>function reference</strong> across renders. Use them to avoid expensive recalculations or to keep stable references for memoized children / effect deps. Don't sprinkle them everywhere — premature memoization adds complexity and memory cost without benefit. Measure first.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q7.</span> What are the Rules of Hooks?</p>
+<p class="a">(1) Only call hooks at the <strong>top level</strong> — never inside loops, conditions, or nested functions. (2) Only call hooks from <strong>React function components or custom hooks</strong>. React relies on consistent <strong>call order</strong> across renders to match each hook to its state.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q8.</span> What is a custom hook and when would you write one?</p>
+<p class="a">A custom hook is a function starting with <code>use</code> that <strong>reuses stateful logic</strong> by composing built-in hooks (e.g. <code>useDebounce</code>, <code>useLocalStorage</code>). It shares <em>logic</em>, not state — each call gets its own isolated state. Write one when the same hook logic appears in multiple components.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q9.</span> How does state batching work, and why might two <code>setState</code> calls not double-update?</p>
+<p class="a">React <strong>batches</strong> multiple state updates in the same event into a single re-render for performance. Because state is a <strong>snapshot</strong> per render, <code>setCount(count+1); setCount(count+1)</code> both read the same <code>count</code>. Use the <strong>updater function</strong> <code>setCount(c =&gt; c+1)</code> to queue updates based on the latest value.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q10.</span> Lifting state up vs Context vs a state library — when to use each?</p>
+<p class="a"><strong>Lift state up</strong> to the closest common parent when a few nearby components share it. Use <strong>Context</strong> for low-frequency global values (theme, current user, locale) to avoid prop drilling. Reach for a library (Zustand, Redux, TanStack Query) for complex/global client state or server-cache state. Don't put fast-changing values in Context (causes wide re-renders).</p></div>
+
+<!-- ============ NEXT.JS ============ -->
+<h2 class="section pagebreak">Part 2 — Next.js (App Router) (Q11–Q27)</h2>
+<p class="section-note">Heaviest section — they asked you to build with Next, so expect deep questions here.</p>
+
+<div class="qa"><p class="q"><span class="qnum">Q11.</span> Server Components vs Client Components — the core rule?</p>
+<p class="a">In the App Router, components are <strong>Server Components by default</strong>: they run only on the server, their code is <strong>never shipped to the browser bundle</strong>, and they can't use hooks/state/browser APIs. You opt into a <strong>Client Component</strong> with <code>"use client"</code> at the top of the file — only when you need <strong>interactivity</strong>: state, effects, event handlers, or browser APIs.</p>
+<div class="tip"><b>Rule:</b> Server by default; <code>"use client"</code> only for state / events / browser APIs.</div></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q12.</span> Why can a Server Component be <code>async</code> and <code>await</code> data directly?</p>
+<p class="a">Because it runs <strong>once on the server</strong> during the request and produces HTML — there's no client re-render loop. React natively supports <strong>async Server Components</strong>: the server waits for the <code>await</code> to resolve, then streams the finished HTML. This replaces most <code>useEffect</code>-based data fetching.</p>
+<pre><code>async function Page() {
+  const data = await getData(); // direct await, server only
+  return &lt;List items={data} /&gt;;
+}</code></pre></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q13.</span> How do you fetch data and where should fetching live in the App Router?</p>
+<p class="a">Fetch <strong>directly inside async Server Components</strong> (or in a data-access layer they call). Next.js extends <code>fetch</code> with caching/revalidation. Keep data fetching on the server close to where it's used; only fetch on the client for truly interactive/real-time needs. This reduces bundle size and avoids client waterfalls.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q14.</span> Explain rendering strategies: SSR, SSG, ISR, and CSR.</p>
+<p class="a"><strong>SSR</strong>: HTML rendered per request (fresh, dynamic). <strong>SSG</strong>: HTML built once at build time (fastest, static). <strong>ISR</strong> (Incremental Static Regeneration): static pages regenerated in the background after a revalidate interval. <strong>CSR</strong>: rendered in the browser via JS. App Router lets you choose per route via caching/<code>revalidate</code>/<code>dynamic</code> settings.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q15.</span> What does <code>loading.tsx</code> do and what powers it?</p>
+<p class="a">It's an <strong>automatic Suspense fallback</strong> for a route segment. Next.js wraps the page in <code>&lt;Suspense&gt;</code>; while the async Server Component awaits data, <code>loading.tsx</code> <strong>streams to the browser instantly</strong>, then the finished UI streams in and replaces it. Powered by <strong>React Suspense + streaming SSR</strong>.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q16.</span> What is the special file convention? (<code>layout</code>, <code>page</code>, <code>loading</code>, <code>error</code>, <code>not-found</code>, <code>route</code>)</p>
+<p class="a"><code>page.tsx</code> = the route UI; <code>layout.tsx</code> = shared wrapper that <strong>persists</strong> across child navigations (doesn't re-render); <code>loading.tsx</code> = Suspense fallback; <code>error.tsx</code> = error boundary (must be a Client Component); <code>not-found.tsx</code> = 404 UI; <code>route.ts</code> = API endpoint (Route Handler); <code>template.tsx</code> = like layout but re-mounts on navigation.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q17.</span> How does file-based routing and dynamic routing work?</p>
+<p class="a">Folders define URL segments; <code>page.tsx</code> makes a segment routable. <strong>Dynamic segments</strong> use brackets: <code>app/servers/[id]/page.tsx</code> → <code>/servers/srv-1</code>, with <code>params.id</code> available. <code>[...slug]</code> is catch-all, <code>[[...slug]]</code> optional catch-all. Route groups <code>(group)</code> organize folders without affecting the URL (you used <code>(auth)</code> and <code>(dashboard)</code>).</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q18.</span> What does Next.js <code>&lt;Link&gt;</code> do that a plain <code>&lt;a&gt;</code> doesn't?</p>
+<p class="a">It performs <strong>client-side (soft) navigation</strong>: fetches only the new route's RSC payload, keeps unchanged layouts mounted, updates the URL — <strong>no full page reload</strong>. It also <strong>prefetches</strong> linked routes in the viewport for near-instant transitions. A plain <code>&lt;a&gt;</code> triggers a full document reload.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q19.</span> Why store filter/sort state in the URL instead of <code>useState</code>?</p>
+<p class="a">URL state is <strong>shareable/bookmarkable</strong> (send a teammate <code>?status=Down</code> and they see the same view), <strong>survives refresh</strong>, works with <strong>Back/Forward</strong> buttons, and is <strong>server-renderable</strong> on first load. <code>useState</code> resets on refresh and isn't shareable. Phrase: <em>"URL as the single source of truth for shareable, refresh-safe UI state."</em></p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q20.</span> What is <code>middleware.ts</code> and is it enough for auth?</p>
+<p class="a">Middleware runs <strong>before a request completes</strong> (at the edge) — great for redirects, auth gating, rewrites, headers. It's a <strong>UX/optimization gate, not your only security layer.</strong> You must <strong>re-check the session at the data layer</strong> (Server Component / Route Handler), because middleware matchers can have gaps and have historically had bypass CVEs. Authorization belongs next to the data.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q21.</span> Server Actions — what are they and when to use them?</p>
+<p class="a">Server Actions are <strong><code>"use server"</code> async functions that run on the server</strong> but can be called from client/forms without manually writing an API route. Use them for mutations (form submit, create/update/delete). They integrate with progressive enhancement and let you <code>revalidatePath</code>/<code>revalidateTag</code> after a change.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q22.</span> How does caching &amp; revalidation work in the App Router?</p>
+<p class="a">Next.js can cache fetch results and rendered routes. Control freshness with <code>fetch(url, { next: { revalidate: 60 } })</code> (time-based ISR), <code>{ cache: 'no-store' }</code> (always dynamic), or tag-based <code>revalidateTag()</code> / <code>revalidatePath()</code> after mutations. Note caching defaults have changed across Next versions — <strong>check the docs in <code>node_modules/next/dist/docs/</code> for your exact version.</strong></p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q23.</span> How do Route Handlers (<code>route.ts</code>) differ from pages, and how did your auth use them?</p>
+<p class="a"><code>route.ts</code> exports HTTP methods (<code>GET</code>, <code>POST</code>, ...) and returns a <code>Response</code> — it's your API layer (no UI). Your app uses <code>api/login</code>, <code>api/signup</code>, <code>api/logout</code> handlers to verify credentials, sign a JWT, and set/clear the <strong>HttpOnly session cookie</strong> via response headers.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q24.</span> How do you read <code>searchParams</code> and <code>params</code>, and why validate them?</p>
+<p class="a">In Server Components they're provided as props (in recent Next versions <code>searchParams</code>/<code>params</code> are <strong>awaited Promises</strong>: <code>const { id } = await params;</code>). Always <strong>validate</strong> against an allow-list — they're <strong>untrusted user input</strong> and TS types are erased at runtime, so a bad value could break rendering or be an injection/XSS vector.</p>
+<pre><code>const status = allowed.includes(raw) ? raw : "All"; // allow-list</code></pre></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q25.</span> How do you handle environment variables in Next.js? What does <code>NEXT_PUBLIC_</code> mean?</p>
+<p class="a">Server-only secrets (like <code>AUTH_SECRET</code>, <code>DATABASE_URL</code>) stay on the server and are read via <code>process.env</code> in server code. Only variables prefixed with <strong><code>NEXT_PUBLIC_</code></strong> are inlined into the <strong>browser bundle</strong> — so never put secrets there. Store local values in <code>.env.local</code> (gitignored).</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q26.</span> How does Next.js optimize images and fonts?</p>
+<p class="a"><code>next/image</code> gives automatic resizing, modern formats (WebP/AVIF), lazy loading, and prevents layout shift via required width/height. <code>next/font</code> self-hosts fonts at build time (no external request), supports subsetting, and avoids layout shift with <code>font-display</code>. Both improve Core Web Vitals (LCP, CLS).</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q27.</span> What is hydration, and what causes a "hydration mismatch" error?</p>
+<p class="a">Hydration is React <strong>attaching event listeners and state to server-rendered HTML</strong> in the browser, making it interactive. A <strong>mismatch</strong> happens when the client's first render differs from the server's HTML — e.g. using <code>Date.now()</code>, <code>window</code>, random values, or <code>localStorage</code> during render. Fix by rendering such values in <code>useEffect</code> or gating with a mounted flag.</p></div>
+
+<!-- ============ HTML ============ -->
+<h2 class="section pagebreak">Part 3 — HTML (Q28–Q35)</h2>
+<p class="section-note">Often used to screen for accessibility and fundamentals.</p>
+
+<div class="qa"><p class="q"><span class="qnum">Q28.</span> What is semantic HTML and why does it matter?</p>
+<p class="a">Semantic HTML uses elements that describe their <strong>meaning</strong> (<code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;button&gt;</code>) rather than generic <code>&lt;div&gt;</code>/<code>&lt;span&gt;</code>. Benefits: <strong>accessibility</strong> (screen readers), <strong>SEO</strong>, and <strong>maintainability</strong>. Example: use <code>&lt;button&gt;</code> for actions — it's focusable and keyboard-operable for free.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q29.</span> What are the most important accessibility (a11y) practices?</p>
+<p class="a">Use semantic elements; provide <strong><code>alt</code> text</strong> on images; label form inputs (<code>&lt;label htmlFor&gt;</code>); ensure <strong>keyboard navigation</strong> and visible <strong>focus states</strong>; maintain <strong>color contrast</strong> (WCAG AA 4.5:1); use <strong>ARIA</strong> only when semantics aren't enough; manage focus in modals. Test with keyboard-only and a screen reader.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q30.</span> Difference between <code>&lt;div&gt;</code> and <code>&lt;span&gt;</code>? Block vs inline elements?</p>
+<p class="a"><code>&lt;div&gt;</code> is a <strong>block</strong> element (starts on a new line, takes full width); <code>&lt;span&gt;</code> is <strong>inline</strong> (flows within text, only as wide as content). Block elements stack vertically; inline elements sit side by side and ignore top/bottom width/height in the normal flow.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q31.</span> What does the <code>&lt;!DOCTYPE html&gt;</code> and <code>&lt;meta viewport&gt;</code> do?</p>
+<p class="a"><code>&lt;!DOCTYPE html&gt;</code> tells the browser to use <strong>standards mode</strong> (HTML5) instead of legacy quirks mode. <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</code> makes the page <strong>responsive</strong> by mapping the layout viewport to the device width — essential for mobile.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q32.</span> How do you build an accessible, semantic form?</p>
+<p class="a">Wrap in <code>&lt;form&gt;</code>; pair every input with a <code>&lt;label&gt;</code> (via <code>htmlFor</code>/<code>id</code>); use correct <code>type</code> (<code>email</code>, <code>password</code>), <code>name</code>, <code>required</code>, and <code>autocomplete</code>; use a real <code>&lt;button type="submit"&gt;</code>; show validation messages tied to inputs with <code>aria-describedby</code>. Native validation + semantics gives keyboard and screen-reader support for free.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q33.</span> What's the difference between <code>id</code> and <code>class</code> attributes?</p>
+<p class="a"><code>id</code> must be <strong>unique</strong> per page and targets a single element (also used for anchors and <code>label htmlFor</code>); <code>class</code> can be <strong>reused</strong> on many elements and is the primary styling hook. In CSS specificity, <code>id</code> (100) outweighs <code>class</code> (10) — prefer classes for styling to keep specificity low.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q34.</span> What are <code>data-*</code> attributes used for?</p>
+<p class="a">Custom <code>data-*</code> attributes store <strong>extra information on elements</strong> without inventing non-standard attributes, readable via <code>element.dataset</code> in JS or <code>[data-state="open"]</code> in CSS. Common for hooks, test selectors (<code>data-testid</code>), and styling state. Don't use them for large data or sensitive info.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q35.</span> Explain the DOM and event bubbling/delegation.</p>
+<p class="a">The <strong>DOM</strong> is the browser's tree representation of the HTML that JS can read/modify. <strong>Bubbling</strong>: an event fires on the target then propagates up to ancestors. <strong>Delegation</strong>: attach one listener on a parent and use <code>event.target</code> to handle many children — efficient for dynamic lists. Use <code>stopPropagation()</code> to stop bubbling, <code>preventDefault()</code> to cancel default behavior.</p></div>
+
+<!-- ============ CSS ============ -->
+<h2 class="section pagebreak">Part 4 — CSS (Q36–Q45)</h2>
+<p class="section-note">You used Tailwind — expect both raw CSS concepts and utility-class reasoning.</p>
+
+<div class="qa"><p class="q"><span class="qnum">Q36.</span> Explain the CSS Box Model.</p>
+<p class="a">Every element is a box: <strong>content → padding → border → margin</strong> (inside out). <code>width</code>/<code>height</code> apply to content by default. <code>box-sizing: border-box</code> makes width include padding+border (far more predictable — most resets set this globally). Margins collapse vertically between block elements.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q37.</span> Flexbox vs Grid — when to use each?</p>
+<p class="a"><strong>Flexbox</strong> is one-dimensional (a row OR a column) — ideal for toolbars, nav bars, aligning items in a line. <strong>Grid</strong> is two-dimensional (rows AND columns) — ideal for page layouts and card grids. Rule of thumb: content-driven single axis → Flex; layout-driven 2D structure → Grid. They compose well together.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q38.</span> How does CSS specificity work and how is a conflict resolved?</p>
+<p class="a">Specificity ranks selectors: inline style (1000) &gt; <code>id</code> (100) &gt; class/attribute/pseudo-class (10) &gt; element/pseudo-element (1). Higher specificity wins; if equal, the <strong>later</strong> rule wins (source order). <code>!important</code> overrides all (avoid it). Keep specificity low — prefer classes — so styles stay overridable.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q39.</span> Explain <code>position</code>: static, relative, absolute, fixed, sticky.</p>
+<p class="a"><strong>static</strong>: normal flow (default). <strong>relative</strong>: offset from its normal spot; creates a positioning context. <strong>absolute</strong>: removed from flow, positioned relative to nearest positioned ancestor. <strong>fixed</strong>: positioned relative to the viewport (stays on scroll). <strong>sticky</strong>: acts relative until a scroll threshold, then sticks (great for headers).</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q40.</span> How do you make a layout responsive?</p>
+<p class="a">Mobile-first with <strong>media queries</strong> (<code>@media (min-width:768px)</code>), fluid units (<code>%</code>, <code>rem</code>, <code>fr</code>, <code>clamp()</code>), flexible <strong>Flex/Grid</strong> layouts, <code>max-width</code> on containers, responsive images, and the viewport meta tag. In Tailwind, use breakpoint prefixes like <code>sm:</code> <code>md:</code> <code>lg:</code> (you used <code>sm:flex-row</code>).</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q41.</span> Difference between <code>rem</code>, <code>em</code>, <code>px</code>, <code>%</code>, and viewport units?</p>
+<p class="a"><code>px</code> = absolute. <code>em</code> = relative to the element's font-size (compounds with nesting). <code>rem</code> = relative to the <strong>root</strong> font-size (predictable — preferred for spacing/typography and accessibility). <code>%</code> = relative to the parent. <code>vw/vh</code> = relative to viewport width/height. Use <code>rem</code> for scalable, accessible sizing.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q42.</span> What are CSS custom properties (variables) and why use them?</p>
+<p class="a">Declared with <code>--name: value</code> and read via <code>var(--name)</code>; they <strong>cascade and can change at runtime</strong> (e.g. theming/dark mode by overriding on a parent). Unlike Sass variables (compile-time), CSS variables are live in the browser. Your app uses them: <code>bg-app-card</code>, <code>--on-accent</code>, <code>--row-hover</code> — the backbone of a themeable design system.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q43.</span> How do you implement dark mode in CSS / Tailwind?</p>
+<p class="a">Define color <strong>tokens as CSS variables</strong> and override them under a <code>.dark</code> class or <code>@media (prefers-color-scheme: dark)</code>; components reference the tokens, not raw colors. In Tailwind, use the <code>dark:</code> variant or a class strategy. This keeps one set of components that re-theme by swapping variable values.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q44.</span> What's the difference between <code>visibility:hidden</code>, <code>display:none</code>, and <code>opacity:0</code>?</p>
+<p class="a"><code>display:none</code> removes the element from layout entirely (no space, not focusable). <code>visibility:hidden</code> hides it but <strong>keeps its space</strong>. <code>opacity:0</code> makes it invisible but it still <strong>occupies space and remains interactive</strong> (clickable/focusable). Choose based on whether you need layout space and interactivity.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q45.</span> What is the utility-first approach (Tailwind) — pros and cons?</p>
+<p class="a"><strong>Pros:</strong> styles colocated with markup, no naming/dead-CSS problems, consistent spacing/scale via design tokens, fast iteration, small production CSS (unused classes purged). <strong>Cons:</strong> verbose class strings, learning curve, can hurt readability without componentization. Mitigate by extracting repeated patterns into components and using <code>@apply</code> or tokens for shared styles.</p></div>
+
+<!-- ============ TYPESCRIPT ============ -->
+<h2 class="section pagebreak">Part 5 — TypeScript (Q46–Q48)</h2>
+
+<div class="qa"><p class="q"><span class="qnum">Q46.</span> What is a union / string literal type, and how does it differ from a TS <code>enum</code>?</p>
+<p class="a"><code>type Status = "Up" | "Down" | "Degraded"</code> is a <strong>string literal union</strong>: it restricts a value to specific allowed strings, gives autocomplete, and is <strong>compile-time only</strong> (zero runtime output). A TS <code>enum</code> generates real JavaScript at runtime. Modern codebases prefer unions for their zero-cost erasure.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q47.</span> <code>type</code> vs <code>interface</code> — what's the real difference?</p>
+<p class="a">Both can model objects. <strong><code>interface</code></strong> supports <strong>declaration merging</strong> and uses <code>extends</code> — idiomatic for object/class shapes and public APIs. <strong><code>type</code></strong> can express <strong>unions, intersections, tuples, and primitive aliases</strong> that interfaces can't (e.g. <code>ServerStatus</code> must be a <code>type</code> because it's a union).</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q48.</span> Why validate untrusted input even with TypeScript? What are generics?</p>
+<p class="a">TS types are <strong>erased at runtime</strong> — a value cast as <code>ServerStatus</code> could actually be anything from a URL/API, so validate with an <strong>allow-list</strong> or schema (e.g. Zod). <strong>Generics</strong> let you write reusable, type-safe code parameterized by a type: <code>function first&lt;T&gt;(arr: T[]): T</code> preserves the element type for the caller.</p></div>
+
+<!-- ============ DESIGN SYSTEMS ============ -->
+<h2 class="section">Part 6 — Design Systems (Q49–Q50)</h2>
+
+<div class="qa"><p class="q"><span class="qnum">Q49.</span> What is a design system and what are design tokens?</p>
+<p class="a">A <strong>design system</strong> is a shared, reusable set of <strong>components, patterns, guidelines, and tokens</strong> that keep a product consistent and faster to build (e.g. Material, shadcn/ui). <strong>Design tokens</strong> are the named primitives — colors, spacing, typography, radii, shadows (e.g. <code>--color-accent</code>, <code>--space-4</code>) — usually stored as CSS variables so themes (light/dark/brand) swap by changing token values, not components.</p></div>
+
+<div class="qa"><p class="q"><span class="qnum">Q50.</span> How do you build a reusable, accessible component (e.g. a Button) in a design system?</p>
+<p class="a">Design a clear <strong>props API</strong> (<code>variant</code>, <code>size</code>, <code>disabled</code>, <code>asChild</code>); base it on the correct <strong>semantic element</strong> (<code>&lt;button&gt;</code>); style via <strong>tokens</strong> (not hardcoded colors) so it themes automatically; ensure <strong>accessibility</strong> (focus ring, <code>aria-*</code>, keyboard support, disabled handling); keep it <strong>composable</strong> and documented (Storybook). Variants are best managed with a tool like <code>cva</code> (class-variance-authority) for consistent, type-safe class combinations.</p>
+<div class="tip"><b>Senior signal:</b> "Components consume tokens, never raw values — that's what makes the system themeable and consistent."</div></div>
+
+<footer>
+  Generated for Ali · 50 Q&amp;A · React · Next.js 16 (App Router) · HTML · CSS · TypeScript · Design Systems<br>
+  Tip: For Next.js version-specific behavior (caching, params), always confirm against <code>node_modules/next/dist/docs/</code> in your project.
+</footer>
+
+</div>
+</body>
+</html>
