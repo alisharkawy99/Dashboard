@@ -44,14 +44,14 @@ const Home = () => {
           <button
             type="button"
             onClick={() => router.push("/login")}
-            className="rounded-lg px-3 py-2 text-sm font-medium text-app-muted transition-colors duration-200 hover:text-app-fg"
+            className=" cursor-pointer rounded-lg px-3 py-2 text-sm font-medium text-app-muted transition-colors duration-200 hover:text-app-fg"
           >
             Sign in
           </button>
           <button
             type="button"
             onClick={() => router.push("/signup")}
-            className="rounded-lg bg-app-accent px-4 py-2 text-sm font-semibold text-[var(--on-accent)] shadow-lg shadow-app-accent/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-app-accent-hover hover:shadow-app-accent/35"
+            className="cursor-pointer rounded-lg bg-app-accent px-4 py-2 text-sm font-semibold text-[var(--on-accent)] shadow-lg shadow-app-accent/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-app-accent-hover hover:shadow-app-accent/35"
           >
             Get started
           </button>
@@ -79,14 +79,14 @@ const Home = () => {
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="rounded-xl bg-app-accent px-6 py-3 text-sm font-semibold text-[var(--on-accent)] shadow-lg shadow-app-accent/30 transition-all duration-200 hover:-translate-y-0.5 hover:bg-app-accent-hover hover:shadow-app-accent/40"
+              className="cursor-pointer rounded-xl bg-app-accent px-6 py-3 text-sm font-semibold text-[var(--on-accent)] shadow-lg shadow-app-accent/30 transition-all duration-200 hover:-translate-y-0.5 hover:bg-app-accent-hover hover:shadow-app-accent/40"
             >
               Open dashboard
             </button>
             <button
               type="button"
               onClick={() => router.push("/signup")}
-              className="rounded-xl border border-app-border bg-app-card px-6 py-3 text-sm font-semibold text-app-fg transition-all duration-200 hover:border-app-accent/50 hover:bg-app-card-muted"
+              className="cursor-pointer rounded-xl border border-app-border bg-app-card px-6 py-3 text-sm font-semibold text-app-fg transition-all duration-200 hover:border-app-accent/50 hover:bg-app-card-muted"
             >
               Create account
             </button>
@@ -95,7 +95,7 @@ const Home = () => {
             Already using XOrithm?{" "}
             <Link
               href="/login"
-              className="font-medium text-app-accent underline-offset-4 transition-colors duration-200 hover:text-app-accent-hover hover:underline"
+              className="cursor-pointer font-medium text-app-accent underline-offset-4 transition-colors duration-200 hover:text-app-accent-hover hover:underline"
             >
               Sign in to your workspace
             </Link>

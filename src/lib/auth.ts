@@ -11,12 +11,15 @@ const secret = encoder.encode(
 );
 
 export const SESSION_COOKIE_NAME = "xorithm_session";
+/** Keep in sync with session cookie maxAge in src/lib/session.ts */
+export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+
 export async function createSessionToken(payload: SessionPayload) {
     return new SignJWT(payload)
       .setProtectedHeader({ alg: "HS256" })
       .setSubject(payload.sub)
       .setIssuedAt()
-      .setExpirationTime("1d")
+      .setExpirationTime(`${SESSION_MAX_AGE_SECONDS}s`)
       .sign(secret);
   }
   

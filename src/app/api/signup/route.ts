@@ -1,21 +1,23 @@
 import { randomUUID } from "crypto";
-import { createSessionToken, SESSION_COOKIE_NAME } from "@/src/lib/auth";
+import { createSessionToken } from "@/src/lib/auth";
 import { createUser, findUserByEmail } from "@/src/lib/user";
-import { cookies } from "next/headers";
+import { setSessionCookie } from "@/src/lib/session";
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-
-const cookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
-  path: "/",
-  maxAge: 60 * 60 * 24 * 30,
-};
+import { firstValidationMessage, signupSchema } from "@/src/lib/validators";
 
 export const POST = async (request: Request) => {
   try {
-    const { name, email, password } = await request.json();
+    const body = await request.json();
+    const parsed = signupSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { message: firstValidationMessage(parsed.error) },
+        { status: 400 },
+      );
+    }
+
+    const { name, email, password } = parsed.data;
     if (await findUserByEmail(email)) {
       return NextResponse.json(
         { message: "An account with this email already exists" },
@@ -26,7 +28,7 @@ export const POST = async (request: Request) => {
     const user = await createUser({
       id: randomUUID(),
       name,
-      email: email.toLowerCase(),
+      email,
       passwordHash,
     });
     const sessionToken = await createSessionToken({
@@ -34,8 +36,7 @@ export const POST = async (request: Request) => {
       email: user.email,
       name: user.name,
     });
-    const cookieStore = await cookies();
-    cookieStore.set(SESSION_COOKIE_NAME, sessionToken, cookieOptions);
+    await setSessionCookie(sessionToken);
     return NextResponse.json({ message: "User created successfully" }, { status: 200 });
   } catch (e: unknown) {
     const err = e as { code?: string };
